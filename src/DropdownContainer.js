@@ -7,7 +7,23 @@ class DropdownWithText extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			optionsVisible: false
+			optionsVisible: false,
+			options: [
+				{ name: 'Hello', value: 'hello' },
+				{ name: 'World', value: 'world' },
+				{ name: 'Hello', value: 'hello' },
+				{ name: 'World', value: 'world' },
+				{ name: 'World', value: 'world' },
+				{ name: 'Hello', value: 'hello' },
+				{ name: 'World', value: 'world' },
+				{ name: 'Hello', value: 'hello' },
+				{ name: 'Victor', value: 'victor' },
+				{ name: 'Alexey', value: 'alexey' },
+				{ name: 'Sagar', value: 'sagar' },
+				{ name: 'JD', value: 'jd' },
+				{ name: 'Ravi', value: 'ravi' },
+				{ name: 'Steve', value: 'steve' }
+			]
 		};
 	}
 
@@ -52,21 +68,7 @@ class DropdownWithText extends Component {
 				>
 					{this.props.title} <i className="arrow" />
 				</button>
-				{this.state.optionsVisible ? (
-					<OptionPanel
-						options={[
-							{ name: 'Hello', value: 'hello' },
-							{ name: 'World', value: 'world' },
-							{ name: 'Hello', value: 'hello' },
-							{ name: 'World', value: 'world' },
-							{ name: 'World', value: 'world' },
-							{ name: 'Hello', value: 'hello' },
-							{ name: 'World', value: 'world' },
-							{ name: 'Hello', value: 'hello' },
-							{ name: 'World', value: 'world' }
-						]}
-					/>
-				) : null}
+				{this.state.optionsVisible ? <OptionPanel options={this.state.options} /> : null}
 			</div>
 		);
 	}
