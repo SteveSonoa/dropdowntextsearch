@@ -11,18 +11,18 @@ class DropdownWithText extends Component {
 			options: [
 				{ name: 'Hello', value: 'hello' },
 				{ name: 'World', value: 'world' },
-				{ name: 'Hello', value: 'hello' },
-				{ name: 'World', value: 'world' },
-				{ name: 'World', value: 'world' },
-				{ name: 'Hello', value: 'hello' },
-				{ name: 'World', value: 'world' },
-				{ name: 'Hello', value: 'hello' },
 				{ name: 'Victor', value: 'victor' },
 				{ name: 'Alexey', value: 'alexey' },
 				{ name: 'Sagar', value: 'sagar' },
 				{ name: 'JD', value: 'jd' },
 				{ name: 'Ravi', value: 'ravi' },
-				{ name: 'Steve', value: 'steve' }
+				{ name: 'Steve', value: 'steve' },
+				{ name: 'Mom', value: 'mom' },
+				{ name: 'Dad', value: 'dad' },
+				{ name: 'Sister', value: 'sister' },
+				{ name: 'Brother', value: 'brother' },
+				{ name: 'Aunt', value: 'aunt' },
+				{ name: 'Uncle', value: 'uncle' }
 			]
 		};
 	}
@@ -52,9 +52,10 @@ class DropdownWithText extends Component {
 	};
 
 	render() {
-		let activeStyle;
+		let activeStyle, arrowStyle;
 		if (this.state.optionsVisible) {
 			activeStyle = { borderRadius: '4px 4px 0 0' };
+			arrowStyle = { transform: 'rotate(-135deg)', webkitTransform: 'rotate(-135deg)' };
 		} else {
 			activeStyle = { borderRadius: '4px' };
 		}
@@ -66,7 +67,7 @@ class DropdownWithText extends Component {
 					onClick={this.toggleOptionsVisible}
 					style={activeStyle}
 				>
-					{this.props.title} <i className="arrow" />
+					{this.props.title} <i className="arrow" style={arrowStyle} />
 				</button>
 				{this.state.optionsVisible ? <OptionPanel options={this.state.options} /> : null}
 			</div>

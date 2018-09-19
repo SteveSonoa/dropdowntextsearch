@@ -27,3 +27,17 @@ li:hover {
 	background-color: cornflowerblue;
 	color: #ffffff;
 }
+
+.opInput {
+	padding: 5px;
+	width: 80%;
+	margin: 5px;
+	margin-bottom: '5px';
+}
+
+input {
+	font-family: inherit;
+	color: inherit;
+	border-radius: 3px;
+	border-width: 1px;
+}

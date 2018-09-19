@@ -6,13 +6,37 @@ class OptionPanel extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			filter: ''
+			filter: '',
+			checkedStatus: {}
 		};
+	}
+
+	componentDidMount() {
+		let checkedStatus = {};
+		for (let i = 0; i < this.props.options.length; i++) {
+			checkedStatus = {
+				...checkedStatus,
+				[this.props.options[i].value]: false
+			};
+		}
+		this.setState({
+			checkedStatus
+		});
 	}
 
 	handleChange = e => {
 		this.setState({
 			filter: e.target.value
+		});
+	};
+
+	handleSelectItem = e => {
+		console.log(e.target.id);
+		this.setState({
+			checkedStatus: {
+				...this.state.checkedStatus,
+				[e.target.id]: !this.state.checkedStatus[e.target.id]
+			}
 		});
 	};
 
@@ -24,7 +48,7 @@ class OptionPanel extends Component {
 	};
 
 	render() {
-		let overflowIndicator;
+		let overflowIndicator, inputStyle;
 		if (this.filterOptions().length > 6) {
 			overflowIndicator = {
 				maxHeight: '200px',
@@ -36,7 +60,15 @@ class OptionPanel extends Component {
 		const listOptions = (
 			<ul>
 				{this.filterOptions().map(option => (
-					<li className="opLi">{option.name}</li>
+					<li className="opLi" id={option.value} onClick={this.handleSelectItem}>
+						<input
+							type="checkbox"
+							name="names"
+							value={option.value}
+							checked={this.state.checkedStatus[option.value]}
+						/>
+						{option.name}
+					</li>
 				))}
 			</ul>
 		);
@@ -45,9 +77,9 @@ class OptionPanel extends Component {
 			<div className="opContainer" style={overflowIndicator}>
 				<input
 					type="text"
-					style={{ width: '90%', margin: '0 auto', marginBottom: '5px' }}
 					value={this.state.filter}
 					onChange={this.handleChange}
+					className="opInput"
 				/>
 				{listOptions}
 			</div>

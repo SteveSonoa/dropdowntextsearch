@@ -36,4 +36,5 @@ i {
 	-webkit-transform: rotate(45deg);
 	position: relative;
 	top: -3px;
+	transition: .25s;
 }
