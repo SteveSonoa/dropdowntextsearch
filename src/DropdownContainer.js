@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import OptionPanel from './OptionPanel';
 import './DropdownContainer.css';
@@ -8,27 +9,24 @@ class DropdownWithText extends Component {
 		super(props);
 		this.state = {
 			optionsVisible: false,
-			options: [
-				{ name: 'Hello', value: 'hello' },
-				{ name: 'World', value: 'world' },
-				{ name: 'Victor', value: 'victor' },
-				{ name: 'Alexey', value: 'alexey' },
-				{ name: 'Sagar', value: 'sagar' },
-				{ name: 'JD', value: 'jd' },
-				{ name: 'Ravi', value: 'ravi' },
-				{ name: 'Steve', value: 'steve' },
-				{ name: 'Mom', value: 'mom' },
-				{ name: 'Dad', value: 'dad' },
-				{ name: 'Sister', value: 'sister' },
-				{ name: 'Brother', value: 'brother' },
-				{ name: 'Aunt', value: 'aunt' },
-				{ name: 'Uncle', value: 'uncle' }
-			]
+			options: [],
+			checkedStatus: {}
 		};
 	}
 
 	componentDidMount() {
 		document.addEventListener('click', this.handleClickOutside, true);
+		let checkedStatus = {};
+		for (let i = 0; i < this.state.options.length; i++) {
+			checkedStatus = {
+				...checkedStatus,
+				[this.state.options[i].value]: false
+			};
+		}
+		this.setState({
+			options: this.props.options,
+			checkedStatus
+		});
 	}
 
 	componentWillUnmount() {
@@ -51,11 +49,20 @@ class DropdownWithText extends Component {
 		});
 	};
 
+	toggleChecked = value => {
+		this.setState({
+			checkedStatus: {
+				...this.state.checkedStatus,
+				[value]: !this.state.checkedStatus[value]
+			}
+		});
+	};
+
 	render() {
 		let activeStyle, arrowStyle;
 		if (this.state.optionsVisible) {
 			activeStyle = { borderRadius: '4px 4px 0 0' };
-			arrowStyle = { transform: 'rotate(-135deg)', webkitTransform: 'rotate(-135deg)' };
+			arrowStyle = { transform: 'rotate(-135deg)', WebkitTransform: 'rotate(-135deg)' };
 		} else {
 			activeStyle = { borderRadius: '4px' };
 		}
@@ -69,10 +76,31 @@ class DropdownWithText extends Component {
 				>
 					{this.props.title} <i className="arrow" style={arrowStyle} />
 				</button>
-				{this.state.optionsVisible ? <OptionPanel options={this.state.options} /> : null}
+				{this.state.optionsVisible ? (
+					<OptionPanel
+						options={this.state.options}
+						checkedStatus={this.state.checkedStatus}
+						toggleAction={this.toggleChecked}
+					/>
+				) : null}
 			</div>
 		);
 	}
 }
+
+DropdownWithText.propTypes = {
+	title: PropTypes.string,
+	options: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string,
+			value: PropTypes.string
+		})
+	)
+};
+
+DropdownWithText.defaultProps = {
+	title: 'Click to select',
+	options: []
+};
 
 export default DropdownWithText;

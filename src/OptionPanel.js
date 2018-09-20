@@ -1,27 +1,13 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import './OptionPanel.css';
 
 class OptionPanel extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			filter: '',
-			checkedStatus: {}
+			filter: ''
 		};
-	}
-
-	componentDidMount() {
-		let checkedStatus = {};
-		for (let i = 0; i < this.props.options.length; i++) {
-			checkedStatus = {
-				...checkedStatus,
-				[this.props.options[i].value]: false
-			};
-		}
-		this.setState({
-			checkedStatus
-		});
 	}
 
 	handleChange = e => {
@@ -31,13 +17,7 @@ class OptionPanel extends Component {
 	};
 
 	handleSelectItem = e => {
-		console.log(e.target.id);
-		this.setState({
-			checkedStatus: {
-				...this.state.checkedStatus,
-				[e.target.id]: !this.state.checkedStatus[e.target.id]
-			}
-		});
+		this.props.toggleAction(e.target.id);
 	};
 
 	filterOptions = () => {
@@ -48,7 +28,7 @@ class OptionPanel extends Component {
 	};
 
 	render() {
-		let overflowIndicator, inputStyle;
+		let overflowIndicator;
 		if (this.filterOptions().length > 6) {
 			overflowIndicator = {
 				maxHeight: '200px',
@@ -60,13 +40,22 @@ class OptionPanel extends Component {
 		const listOptions = (
 			<ul>
 				{this.filterOptions().map(option => (
-					<li className="opLi" id={option.value} onClick={this.handleSelectItem}>
-						<input
+					<li
+						className={`${
+							this.props.checkedStatus[option.value] ? 'opLi checked' : 'opLi'
+						}`}
+						id={option.value}
+						onClick={this.handleSelectItem}
+						key={option.value}
+					>
+						{/* <input
 							type="checkbox"
 							name="names"
 							value={option.value}
-							checked={this.state.checkedStatus[option.value]}
-						/>
+							id={option.value}
+							checked={this.props.checkedStatus[option.value]}
+							onChange={this.handleSelectItem}
+						/> */}
 						{option.name}
 					</li>
 				))}
@@ -86,5 +75,21 @@ class OptionPanel extends Component {
 		);
 	}
 }
+
+OptionPanel.propTypes = {
+	options: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string,
+			value: PropTypes.string
+		})
+	),
+	checkedStatus: PropTypes.object,
+	toggleAction: PropTypes.func.isRequired
+};
+
+OptionPanel.defaultProps = {
+	options: [],
+	checkedStatus: {}
+};
 
 export default OptionPanel;
