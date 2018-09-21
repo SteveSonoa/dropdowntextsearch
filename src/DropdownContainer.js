@@ -10,6 +10,7 @@ class DropdownWithText extends Component {
 		this.state = {
 			optionsVisible: false,
 			options: [],
+			selectedOptions: [],
 			checkedStatus: {}
 		};
 	}
@@ -17,10 +18,14 @@ class DropdownWithText extends Component {
 	componentDidMount() {
 		document.addEventListener('click', this.handleClickOutside, true);
 		let checkedStatus = {};
-		for (let i = 0; i < this.state.options.length; i++) {
+		for (let i = 0; i < this.props.options.length; i++) {
 			checkedStatus = {
 				...checkedStatus,
-				[this.state.options[i].value]: false
+				[this.props.options[i].value]: {
+					checked: false,
+					index: i,
+					name: this.props.options[i].name
+				}
 			};
 		}
 		this.setState({
@@ -50,11 +55,19 @@ class DropdownWithText extends Component {
 	};
 
 	toggleChecked = value => {
+		const newSelectedOptions = [...this.state.selectedOptions];
+		const oldSelectedOptions = [...this.state.selectedOptions];
+		newSelectedOptions.push({ value: value, name: this.state.checkedStatus[value].name });
+
 		this.setState({
 			checkedStatus: {
 				...this.state.checkedStatus,
-				[value]: !this.state.checkedStatus[value]
-			}
+				[value]: {
+					checked: !this.state.checkedStatus[value].checked,
+					index: this.state.checkedStatus[value].index
+				}
+			},
+			selectedOptions: newSelectedOptions
 		});
 	};
 
@@ -81,6 +94,7 @@ class DropdownWithText extends Component {
 						options={this.state.options}
 						checkedStatus={this.state.checkedStatus}
 						toggleAction={this.toggleChecked}
+						selectedOptions={this.state.selectedOptions}
 					/>
 				) : null}
 			</div>

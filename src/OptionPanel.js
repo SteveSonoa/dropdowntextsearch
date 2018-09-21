@@ -42,7 +42,10 @@ class OptionPanel extends Component {
 				{this.filterOptions().map(option => (
 					<li
 						className={`${
-							this.props.checkedStatus[option.value] ? 'opLi checked' : 'opLi'
+							this.props.checkedStatus[option.value] &&
+							this.props.checkedStatus[option.value].checked
+								? 'opLi checked'
+								: 'opLi'
 						}`}
 						id={option.value}
 						onClick={this.handleSelectItem}
@@ -53,7 +56,35 @@ class OptionPanel extends Component {
 							name="names"
 							value={option.value}
 							id={option.value}
-							checked={this.props.checkedStatus[option.value]}
+							checked={this.props.checkedStatus[option.value].checked}
+							onChange={this.handleSelectItem}
+						/> */}
+						{option.name}
+					</li>
+				))}
+			</ul>
+		);
+
+		const listSelectedOptions = (
+			<ul>
+				{this.props.selectedOptions.map(option => (
+					<li
+						className={`${
+							this.props.checkedStatus[option.value] &&
+							this.props.checkedStatus[option.value].checked
+								? 'opLi checked'
+								: 'opLi'
+						}`}
+						id={option.value}
+						onClick={this.handleSelectItem}
+						key={option.value}
+					>
+						{/* <input
+							type="checkbox"
+							name="names"
+							value={option.value}
+							id={option.value}
+							checked={this.props.checkedStatus[option.value].checked}
 							onChange={this.handleSelectItem}
 						/> */}
 						{option.name}
@@ -64,6 +95,7 @@ class OptionPanel extends Component {
 
 		return (
 			<div className="opContainer" style={overflowIndicator}>
+				{listSelectedOptions}
 				<input
 					type="text"
 					value={this.state.filter}
