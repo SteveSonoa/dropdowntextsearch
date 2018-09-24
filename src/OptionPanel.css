@@ -29,8 +29,6 @@ li:hover {
 }
 
 .checked {
-	background-color: rgb(161, 188, 238);
-	color: #ffffff;
 	font-weight: bolder;
 }
 

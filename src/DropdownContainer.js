@@ -11,31 +11,33 @@ class DropdownWithText extends Component {
 			optionsVisible: false,
 			options: [],
 			selectedOptions: [],
-			checkedStatus: {}
+			prevSelectedOptions: []
 		};
 	}
 
 	componentDidMount() {
 		document.addEventListener('click', this.handleClickOutside, true);
-		let checkedStatus = {};
-		for (let i = 0; i < this.props.options.length; i++) {
-			checkedStatus = {
-				...checkedStatus,
-				[this.props.options[i].value]: {
-					checked: false,
-					index: i,
-					name: this.props.options[i].name
-				}
-			};
-		}
 		this.setState({
-			options: this.props.options,
-			checkedStatus
+			options: [...this.props.options]
 		});
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener('click', this.handleClickOutside, true);
+	}
+
+	componentWillUpdate(nextProps, nextState) {
+		if (
+			this.state.optionsVisible !== nextState.optionsVisible &&
+			!nextState.optionsVisible &&
+			this.state.prevSelectedOptions !== nextState.selectedOptions &&
+			(this.state.prevSelectedOptions.length > 0 || nextState.selectedOptions.length > 0)
+		) {
+			this.setState({
+				prevSelectedOptions: this.state.selectedOptions
+			});
+			this.completeFilteredCall();
+		}
 	}
 
 	handleClickOutside = event => {
@@ -54,21 +56,41 @@ class DropdownWithText extends Component {
 		});
 	};
 
-	toggleChecked = value => {
-		const newSelectedOptions = [...this.state.selectedOptions];
-		const oldSelectedOptions = [...this.state.selectedOptions];
-		newSelectedOptions.push({ value: value, name: this.state.checkedStatus[value].name });
+	selectOption = value => {
+		// find the object inside the this.state.options array
+		const clickedObject = this.state.options.filter(option => option.value === value)[0];
+		// remove that option from the this.state.options array
+		const newStateOptions = this.state.options.filter(option => option.value !== value);
+		// add that option to the this.state.selectedOptions array
+		this.setState({
+			...this.state,
+			selectedOptions: [...this.state.selectedOptions, clickedObject],
+			options: newStateOptions
+		});
+	};
+
+	unselectOption = value => {
+		// remove that option from the this.state.selectedOptions array
+		const newStateSelectedOptions = this.state.selectedOptions.filter(
+			option => option.value !== value
+		);
+		// add that option to its original index inside the this.state.options array
+		let newStateOptions = [...this.props.options];
+		for (let i = 0; i < newStateSelectedOptions.length; i++) {
+			newStateOptions = newStateOptions.filter(
+				option => option.value !== newStateSelectedOptions[i].value
+			);
+		}
 
 		this.setState({
-			checkedStatus: {
-				...this.state.checkedStatus,
-				[value]: {
-					checked: !this.state.checkedStatus[value].checked,
-					index: this.state.checkedStatus[value].index
-				}
-			},
-			selectedOptions: newSelectedOptions
+			...this.state,
+			selectedOptions: newStateSelectedOptions,
+			options: newStateOptions
 		});
+	};
+
+	completeFilteredCall = () => {
+		this.props.action(this.state.selectedOptions);
 	};
 
 	render() {
@@ -92,9 +114,9 @@ class DropdownWithText extends Component {
 				{this.state.optionsVisible ? (
 					<OptionPanel
 						options={this.state.options}
-						checkedStatus={this.state.checkedStatus}
-						toggleAction={this.toggleChecked}
 						selectedOptions={this.state.selectedOptions}
+						actionSelect={this.selectOption}
+						actionUnselect={this.unselectOption}
 					/>
 				) : null}
 			</div>
@@ -109,12 +131,14 @@ DropdownWithText.propTypes = {
 			name: PropTypes.string,
 			value: PropTypes.string
 		})
-	)
+	),
+	action: PropTypes.func
 };
 
 DropdownWithText.defaultProps = {
 	title: 'Click to select',
-	options: []
+	options: [],
+	action: () => {}
 };
 
 export default DropdownWithText;

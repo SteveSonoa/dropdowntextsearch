@@ -17,7 +17,11 @@ class OptionPanel extends Component {
 	};
 
 	handleSelectItem = e => {
-		this.props.toggleAction(e.target.id);
+		this.props.actionSelect(e.target.id);
+	};
+
+	handleUnselectItem = e => {
+		this.props.actionUnselect(e.target.id);
 	};
 
 	filterOptions = () => {
@@ -29,7 +33,7 @@ class OptionPanel extends Component {
 
 	render() {
 		let overflowIndicator;
-		if (this.filterOptions().length > 6) {
+		if (this.filterOptions().length + this.props.selectedOptions.length > 6) {
 			overflowIndicator = {
 				maxHeight: '200px',
 				overflow: 'scroll',
@@ -41,24 +45,11 @@ class OptionPanel extends Component {
 			<ul>
 				{this.filterOptions().map(option => (
 					<li
-						className={`${
-							this.props.checkedStatus[option.value] &&
-							this.props.checkedStatus[option.value].checked
-								? 'opLi checked'
-								: 'opLi'
-						}`}
+						className="opLi"
 						id={option.value}
 						onClick={this.handleSelectItem}
 						key={option.value}
 					>
-						{/* <input
-							type="checkbox"
-							name="names"
-							value={option.value}
-							id={option.value}
-							checked={this.props.checkedStatus[option.value].checked}
-							onChange={this.handleSelectItem}
-						/> */}
 						{option.name}
 					</li>
 				))}
@@ -69,24 +60,18 @@ class OptionPanel extends Component {
 			<ul>
 				{this.props.selectedOptions.map(option => (
 					<li
-						className={`${
-							this.props.checkedStatus[option.value] &&
-							this.props.checkedStatus[option.value].checked
-								? 'opLi checked'
-								: 'opLi'
-						}`}
+						className="opLi checked"
 						id={option.value}
-						onClick={this.handleSelectItem}
+						onClick={this.handleUnselectItem}
 						key={option.value}
 					>
-						{/* <input
-							type="checkbox"
-							name="names"
-							value={option.value}
+						<img
+							src="checkmark.png"
+							style={{ width: '15px' }}
+							alt="Selected"
 							id={option.value}
-							checked={this.props.checkedStatus[option.value].checked}
-							onChange={this.handleSelectItem}
-						/> */}
+							onClick={this.handleSelectItem}
+						/>
 						{option.name}
 					</li>
 				))}
@@ -115,13 +100,19 @@ OptionPanel.propTypes = {
 			value: PropTypes.string
 		})
 	),
-	checkedStatus: PropTypes.object,
-	toggleAction: PropTypes.func.isRequired
+	selectedOptions: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string,
+			value: PropTypes.string
+		})
+	),
+	actionSelect: PropTypes.func.isRequired,
+	actionUnselect: PropTypes.func.isRequired
 };
 
 OptionPanel.defaultProps = {
 	options: [],
-	checkedStatus: {}
+	selectedOptions: []
 };
 
 export default OptionPanel;
